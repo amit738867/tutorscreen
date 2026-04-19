@@ -51,6 +51,9 @@ const Agent = ({
   customParams,
   persona = "mentor",
   voiceEnabled = true,
+  role,
+  interviewType,
+  techstack,
 }: AgentProps) => {
   const router = useRouter();
   const [isSpeaking, setIsSpeaking] = useState(false);
