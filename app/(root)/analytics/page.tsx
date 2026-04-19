@@ -26,7 +26,7 @@ async function AnalyticsPage() {
     ? categories.reduce((prev, current) => (prev.avg > current.avg) ? prev : current).name
     : "Analyzing";
 
-  // Calculate Growth Trend (No numerical delta)
+  // Calculate Growth Trend
   let growthTrend = "Awaiting Data";
   if (totalSessions >= 2) {
     const recentScore = feedbackList[0].totalScore || 0;
@@ -43,17 +43,17 @@ async function AnalyticsPage() {
   }
 
   return (
-    <div className="space-y-12 pb-20 max-w-5xl mx-auto">
-      <div className="border-b border-white/5 pb-10">
-        <div className="space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium">
+    <div className="space-y-12 pb-20 max-w-6xl mx-auto">
+      <div className="border-b border-border-color pb-12">
+        <div className="space-y-6">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-[10px] font-black uppercase tracking-[0.3em]">
             <Brain size={14} />
             Intelligence Hub
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
-            Performance <span className="text-emerald-500 italic lowercase">Analytics</span>
+          <h1 className="text-6xl font-black text-text-primary tracking-tighter leading-none">
+            Performance <span className="text-accent italic lowercase">Analytics</span>
           </h1>
-          <p className="text-slate-500 max-w-xl">
+          <p className="text-text-secondary max-w-xl font-bold text-lg">
             Live quantitative benchmarks derived from your actual session performance and AI evaluation history.
           </p>
         </div>
@@ -66,67 +66,67 @@ async function AnalyticsPage() {
         <MetricCard icon={<BarChart3 size={20} />} label="Total Sessions" value={totalSessions.toString()} trend="Finalized in Vault" />
       </div>
 
-      <div className="glass-card p-10 border-white/5 bg-slate-900/40 relative overflow-hidden group">
-        <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="bg-card-bg p-12 border border-border-color rounded-[3rem] relative overflow-hidden group shadow-xl">
+        <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity" />
         
-        <div className="flex items-center justify-between mb-10">
-          <div className="space-y-1">
-            <h3 className="text-xl font-bold text-white">Historical Performance Mapping</h3>
-            <p className="text-slate-500 text-sm">Quantifying your improvement across the last {totalSessions} sessions</p>
+        <div className="flex items-center justify-between mb-12 relative z-10">
+          <div className="space-y-2">
+            <h3 className="text-2xl font-black text-text-primary tracking-tight">Historical Performance Mapping</h3>
+            <p className="text-text-secondary text-sm font-bold">Quantifying improvement across the last {totalSessions} sessions</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
              <div className="flex items-center gap-2">
-               <div className="size-2 rounded-full bg-emerald-500" />
-               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Your Score</span>
+               <div className="size-2 rounded-full bg-accent" />
+               <span className="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em]">Your Score</span>
              </div>
              <div className="flex items-center gap-2">
-               <div className="h-px w-4 bg-slate-700 border-t border-dashed border-slate-500" />
-               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Target (80%)</span>
+               <div className="h-px w-6 border-t-2 border-dashed border-border-color" />
+               <span className="text-[10px] font-black text-text-secondary uppercase tracking-[0.2em]">Target (80%)</span>
              </div>
           </div>
         </div>
         
         {totalSessions > 0 ? (
-          <div className="relative h-80 w-full flex gap-4">
+          <div className="relative h-96 w-full flex gap-6 relative z-10">
             {/* Y-Axis Labels */}
-            <div className="flex flex-col justify-between h-64 text-[10px] font-bold text-slate-600 pr-4 border-r border-white/5 uppercase tracking-tighter">
+            <div className="flex flex-col justify-between h-80 text-[10px] font-black text-text-secondary pr-6 border-r-2 border-border-color uppercase tracking-widest">
                <span>100%</span>
                <span>50%</span>
                <span>0%</span>
             </div>
 
-            <div className="flex-1 relative h-64 flex items-end justify-between gap-2">
+            <div className="flex-1 relative h-80 flex items-end justify-between gap-4">
               {/* Grid Lines */}
               <div className="absolute inset-0 flex flex-col justify-between pointer-events-none">
-                 <div className="w-full border-t border-white/5" />
-                 <div className="w-full border-t border-white/5" />
-                 <div className="w-full border-t border-white/5" />
+                 <div className="w-full border-t border-border-color opacity-50" />
+                 <div className="w-full border-t border-border-color opacity-50" />
+                 <div className="w-full border-t border-border-color opacity-50" />
               </div>
 
               {/* Target Line */}
-              <div className="absolute left-0 right-0 border-t border-dashed border-emerald-500/30 z-0 pointer-events-none" style={{ bottom: '80%' }}>
-                <span className="absolute -top-5 right-0 text-[8px] font-black text-emerald-500/50 uppercase tracking-[0.2em]">Recruiter Benchmark</span>
+              <div className="absolute left-0 right-0 border-t-2 border-dashed border-accent/30 z-0 pointer-events-none" style={{ bottom: '80%' }}>
+                <span className="absolute -top-6 right-0 text-[10px] font-black text-accent uppercase tracking-[0.3em]">Recruiter Benchmark</span>
               </div>
 
               {/* Bars */}
               {feedbackList.slice(0, 10).reverse().map((f, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-4 group/bar h-full justify-end">
                   <div 
-                    className="w-full max-w-[42px] bg-emerald-500/10 border border-emerald-500/20 rounded-t-lg transition-all duration-500 hover:bg-emerald-500 hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.5)] relative z-10"
+                    className="w-full max-w-[48px] bg-accent/10 border-2 border-accent rounded-t-xl transition-all duration-500 hover:bg-accent group-hover/bar:shadow-lg group-hover/bar:shadow-accent/20 relative z-10"
                     style={{ height: `${f.totalScore}%` }}
                   >
                     {/* Rich Tooltip */}
-                    <div className="absolute -top-16 left-1/2 -translate-x-1/2 bg-slate-800 border border-white/10 p-2 rounded-lg shadow-2xl opacity-0 group-hover/bar:opacity-100 transition-all pointer-events-none z-50 min-w-[120px]">
-                       <p className="text-[8px] font-bold text-slate-500 uppercase mb-1">{new Date(f.createdAt).toLocaleDateString()}</p>
-                       <p className="text-[10px] font-bold text-white truncate max-w-[100px] mb-1">{f.role || "Session"}</p>
+                    <div className="absolute -top-20 left-1/2 -translate-x-1/2 bg-card-bg border border-accent p-3 rounded-2xl shadow-2xl opacity-0 group-hover/bar:opacity-100 transition-all pointer-events-none z-50 min-w-[140px]">
+                       <p className="text-[8px] font-black text-text-secondary uppercase mb-1 tracking-widest">{new Date(f.createdAt).toLocaleDateString()}</p>
+                       <p className="text-[11px] font-black text-text-primary truncate max-w-[120px] mb-2">{f.role || "Session"}</p>
                        <div className="flex items-center justify-between">
-                         <span className="text-xs font-black text-emerald-400">{f.totalScore}%</span>
-                         <span className="text-[8px] font-bold uppercase text-slate-400">{f.finalVerdict}</span>
+                         <span className="text-sm font-black text-accent">{f.totalScore}%</span>
+                         <span className="text-[9px] font-black uppercase text-text-secondary">{f.finalVerdict}</span>
                        </div>
                     </div>
                   </div>
                   {/* X-Axis Label */}
-                  <span className="text-[8px] font-bold text-slate-600 uppercase tracking-widest truncate max-w-[40px] text-center">
+                  <span className="text-[9px] font-black text-text-secondary uppercase tracking-[0.2em] truncate max-w-[50px] text-center">
                     {f.role?.split(' ')[0] || `S${i+1}`}
                   </span>
                 </div>
@@ -134,10 +134,10 @@ async function AnalyticsPage() {
             </div>
           </div>
         ) : (
-          <div className="h-64 w-full bg-slate-800/30 rounded-2xl flex items-center justify-center border border-white/5 border-dashed">
+          <div className="h-80 w-full bg-bg-secondary rounded-[2.5rem] flex items-center justify-center border-2 border-border-color border-dashed">
             <div className="text-center space-y-4">
-              <BarChart3 size={48} className="mx-auto text-slate-700 opacity-20" />
-              <p className="text-slate-600 text-xs font-bold uppercase tracking-widest">Awaiting Initial Data</p>
+              <BarChart3 size={48} className="mx-auto text-text-secondary opacity-20" />
+              <p className="text-text-secondary text-[10px] font-black uppercase tracking-[0.3em]">Awaiting Initial Data</p>
             </div>
           </div>
         )}
@@ -148,20 +148,19 @@ async function AnalyticsPage() {
 
 function MetricCard({ icon, label, value, trend }: { icon: any, label: string, value: string, trend: string }) {
   return (
-    <div className="glass-card p-6 border-white/5 flex flex-col justify-between space-y-4 hover:border-emerald-500/30 transition-colors">
+    <div className="bg-card-bg p-8 border border-border-color rounded-[2.5rem] flex flex-col justify-between space-y-6 hover:shadow-xl transition-all duration-500 hover:-translate-y-1 shadow-sm">
       <div className="flex items-center justify-between">
-        <div className="size-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
+        <div className="size-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent shadow-sm">
           {icon}
         </div>
       </div>
       <div>
-        <p className="text-[10px] uppercase tracking-widest text-slate-600 font-bold mb-1">{label}</p>
-        <p className="text-2xl font-black text-white">{value}</p>
-        <p className="text-[10px] text-slate-500 font-medium mt-1">{trend}</p>
+        <p className="text-[10px] uppercase tracking-[0.4em] text-text-secondary font-black mb-1">{label}</p>
+        <p className="text-3xl font-black text-text-primary tracking-tighter leading-none">{value}</p>
+        <p className="text-[10px] text-accent font-bold uppercase tracking-[0.1em] mt-2">{trend}</p>
       </div>
     </div>
   );
 }
 
 export default AnalyticsPage;
-

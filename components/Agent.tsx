@@ -34,6 +34,9 @@ interface AgentProps {
   customParams?: any;
   persona?: string;
   voiceEnabled?: boolean;
+  role?: string;
+  interviewType?: string;
+  techstack?: string[];
 }
 
 const ASSISTANT_ID = process.env.NEXT_PUBLIC_VAPI_ASSISTANT_ID || "e4d746d5-8048-40ea-ab78-86abe4aea6fd";
@@ -156,14 +159,21 @@ const Agent = ({
 
       try {
         let targetId = interviewId;
-        if (targetId?.startsWith("t-")) targetId = undefined;
+        const isStaticTrack = targetId?.startsWith("tech-") || 
+                             targetId?.startsWith("edu-") || 
+                             targetId?.startsWith("fin-") || 
+                             targetId?.startsWith("mkt-") || 
+                             targetId?.startsWith("ext-") ||
+                             targetId?.startsWith("t-");
+
+        if (isStaticTrack) targetId = undefined;
 
         if (!targetId) {
           const newInterview = await createInterview({
             userId: userId,
-            role: customParams?.role || "Interview Practice",
-            type: customParams?.interviewType || "Practice",
-            techstack: customParams?.stack || ["General"],
+            role: customParams?.role || role || "Interview Practice",
+            type: customParams?.interviewType || interviewType || "Practice",
+            techstack: customParams?.stack || techstack || ["General"],
             questions: [] 
           });
           if (newInterview.success) targetId = newInterview.id;
@@ -209,10 +219,15 @@ const Agent = ({
       dynamicPersona = `You are a strict and highly critical Executive Recruiter interviewing ${userName}. You expect concise, high-impact answers and you will probe for weaknesses in their logic or experience.`;
     }
 
+    const tone = persona === "recruiter" ? "critical and demanding" : "professional yet supportive";
+    
     if (customParams) {
-      const tone = persona === "recruiter" ? "critical and demanding" : "professional yet supportive";
       dynamicPersona = `You are an expert interviewer conducting a ${tone} ${customParams.interviewType} interview for a ${customParams.level} ${customParams.role} position. 
 The focus is on the following tech stack/skills: ${customParams.stack.join(", ")}. 
+Your goal is to evaluate ${userName}'s suitability for this specific role with a ${persona} mindset.`;
+    } else if (role) {
+      dynamicPersona = `You are an expert interviewer conducting a ${tone} ${interviewType || "Technical"} interview for a ${role} position. 
+The focus is on the following tech stack/skills: ${techstack?.join(", ") || "General Knowledge"}. 
 Your goal is to evaluate ${userName}'s suitability for this specific role with a ${persona} mindset.`;
     }
 
@@ -235,7 +250,7 @@ CORE RULES:
 - You must ask exactly ${maxQuestions} questions total.
 - Maintain a ${persona === "recruiter" ? "formal and analytical" : "natural and conversational"} tone.
 - Ensure questions are relevant to the role.
-
+ 
 INTERVIEW CLOSURE:
 - When done, say exactly: "Thank you for the session! I have gathered enough information to provide your feedback. You can view your results in the dashboard now. Have a great day!"`
             }
@@ -271,65 +286,90 @@ INTERVIEW CLOSURE:
 
   if (callStatus === CallStatus.ANALYZING) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[500px] space-y-8">
-        <div className="relative size-32 rounded-3xl bg-slate-900 border border-white/5 flex items-center justify-center">
-          <div className="size-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
+      <div className="flex flex-col items-center justify-center min-h-[500px] space-y-10">
+        <div className="relative size-32 rounded-[2rem] bg-bg-secondary border border-border-color flex items-center justify-center shadow-xl">
+          <div className="size-16 border-[6px] border-accent/20 border-t-accent rounded-full animate-spin" />
         </div>
-        <div className="text-center space-y-3">
-          <h2 className="text-3xl font-bold text-white tracking-tight">Analyzing Performance</h2>
-          <p className="text-slate-500 max-w-sm mx-auto font-medium leading-relaxed">Evaluating your performance against industry benchmarks...</p>
+        <div className="text-center space-y-4">
+          <h2 className="text-4xl font-black text-text-primary tracking-tighter">Analyzing Performance</h2>
+          <p className="text-text-secondary max-w-sm mx-auto font-bold text-lg leading-relaxed">Evaluating your performance against industry benchmarks...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center space-y-12">
-      <div className="flex bg-slate-800 p-1 rounded-xl border border-white/5">
-        <button onClick={() => setMode("voice")} className={cn("px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all", mode === "voice" ? "bg-emerald-600 text-white shadow-lg" : "text-slate-500 hover:text-slate-300")}>Voice Protocol</button>
-        <button onClick={() => setMode("text")} className={cn("px-6 py-2 rounded-lg text-xs font-bold uppercase tracking-widest transition-all", mode === "text" ? "bg-emerald-600 text-white shadow-lg" : "text-slate-500 hover:text-slate-300")}>Text Overlay</button>
+    <div className="min-h-[80vh] flex flex-col items-center justify-center space-y-16">
+      <div className="flex bg-bg-secondary p-1.5 rounded-2xl border border-border-color shadow-inner">
+        <button 
+          onClick={() => setMode("voice")} 
+          className={cn("px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] transition-all duration-300", 
+          mode === "voice" ? "bg-accent text-white shadow-lg" : "text-text-secondary hover:text-text-primary")}
+        >
+          Voice Protocol
+        </button>
+        <button 
+          onClick={() => setMode("text")} 
+          className={cn("px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] transition-all duration-300", 
+          mode === "text" ? "bg-accent text-white shadow-lg" : "text-text-secondary hover:text-text-primary")}
+        >
+          Text Overlay
+        </button>
       </div>
 
-      <div className="text-center space-y-4 max-w-2xl">
-        <div className="flex items-center justify-center gap-3">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium">
-            <div className="size-1.5 bg-emerald-500 rounded-full animate-pulse" />
+      <div className="text-center space-y-6 max-w-2xl">
+        <div className="flex items-center justify-center gap-4">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-[10px] font-black uppercase tracking-[0.3em]">
+            <div className="size-2 bg-accent rounded-full animate-pulse" />
             Live Session
           </div>
           {callStatus === CallStatus.ACTIVE && (
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-800 border border-white/5 text-slate-400 text-xs font-bold uppercase tracking-widest">
-              Question {questionCount} <span className="text-slate-600">of</span> {maxQuestions}
+            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-bg-secondary border border-border-color text-text-secondary text-[10px] font-black uppercase tracking-[0.3em]">
+              Question {questionCount} <span className="text-text-secondary/30 mx-1">/</span> {maxQuestions}
             </div>
           )}
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">Interview <span className="text-emerald-500 italic">Practice</span></h1>
+        <h1 className="text-6xl font-black text-text-primary tracking-tighter leading-none">
+          Interview <span className="text-accent italic">Practice</span>
+        </h1>
       </div>
 
-      <div className="w-full max-w-5xl grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-        <div className="glass-card p-10 flex flex-col items-center justify-center space-y-8 border-white/5 relative overflow-hidden group">
-          <div className="relative size-40 rounded-full bg-slate-900 border border-emerald-500/20 flex items-center justify-center overflow-hidden">
-            <div className={cn("relative z-10 size-20 rounded-full border-2 border-emerald-500/30 flex items-center justify-center transition-all duration-700", callStatus === CallStatus.ACTIVE ? "bg-emerald-500/10 scale-110" : "bg-slate-800")}>
-              <Bot className={cn("size-10 transition-colors", callStatus === CallStatus.ACTIVE ? "text-emerald-500" : "text-slate-600")} />
+      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-10 items-stretch">
+        <div className="bg-card-bg p-12 flex flex-col items-center justify-center space-y-10 border border-border-color rounded-[3rem] relative overflow-hidden group shadow-xl">
+          <div className="relative size-44 rounded-full bg-bg-secondary border border-border-color flex items-center justify-center overflow-hidden shadow-inner">
+            <div className={cn("relative z-10 size-24 rounded-full border-4 border-accent/20 flex items-center justify-center transition-all duration-700", callStatus === CallStatus.ACTIVE ? "bg-accent/10 scale-110 shadow-lg shadow-accent/10" : "bg-bg-primary")}>
+              <Bot className={cn("size-12 transition-colors duration-500", callStatus === CallStatus.ACTIVE ? "text-accent" : "text-text-secondary/40")} />
             </div>
-            {isSpeaking && <div className="absolute inset-0 border-4 border-emerald-500/20 rounded-full animate-ping" />}
+            {isSpeaking && <div className="absolute inset-0 border-[6px] border-accent/20 rounded-full animate-ping" />}
           </div>
-          <h3 className="text-xl font-bold text-white tracking-widest uppercase">AI Intelligence</h3>
+          <h3 className="text-[11px] font-black text-text-primary tracking-[0.5em] uppercase">AI Intelligence</h3>
         </div>
 
-        <div className="glass-card p-10 flex flex-col items-center justify-center space-y-8 border-white/5 group">
+        <div className="bg-card-bg p-12 flex flex-col items-center justify-center space-y-10 border border-border-color rounded-[3rem] group shadow-xl">
           {mode === "voice" ? (
             <>
-              <div className="relative size-40 rounded-full bg-slate-900 border border-white/5 flex items-center justify-center overflow-hidden">
-                <div className="relative z-10 size-20 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center shadow-xl">
-                  <User className="size-10 text-slate-500" />
+              <div className="relative size-44 rounded-full bg-bg-secondary border border-border-color flex items-center justify-center overflow-hidden shadow-inner">
+                <div className="relative z-10 size-24 rounded-full bg-bg-primary border border-border-color flex items-center justify-center shadow-lg">
+                  <User className="size-12 text-text-secondary/40" />
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-white tracking-widest uppercase">{userName}</h3>
+              <h3 className="text-[11px] font-black text-text-primary tracking-[0.5em] uppercase">{userName}</h3>
             </>
           ) : (
-            <div className="w-full h-full flex flex-col space-y-6">
-               <textarea value={textInput} onChange={(e) => setTextInput(e.target.value)} placeholder="Type your response..." className="flex-1 bg-transparent border-none outline-none text-slate-200 placeholder:text-slate-700 resize-none font-medium leading-relaxed" />
-               <button onClick={handleSendText} disabled={!textInput.trim() || callStatus !== CallStatus.ACTIVE} className="w-full h-12 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 text-white font-bold uppercase tracking-widest text-[10px] rounded-xl">Send Response</button>
+            <div className="w-full h-full flex flex-col space-y-8">
+               <textarea 
+                value={textInput} 
+                onChange={(e) => setTextInput(e.target.value)} 
+                placeholder="Initialize response sequence..." 
+                className="flex-1 bg-transparent border-none outline-none text-text-primary placeholder:text-text-secondary/30 resize-none font-bold text-lg leading-relaxed no-scrollbar" 
+              />
+               <button 
+                onClick={handleSendText} 
+                disabled={!textInput.trim() || callStatus !== CallStatus.ACTIVE} 
+                className="w-full h-16 bg-accent hover:bg-accent/90 disabled:bg-bg-secondary disabled:text-text-secondary/30 text-white font-black uppercase tracking-[0.3em] text-[11px] rounded-[1.5rem] shadow-lg shadow-accent/20 transition-all duration-500"
+              >
+                Send Response
+              </button>
             </div>
           )}
         </div>
@@ -337,21 +377,23 @@ INTERVIEW CLOSURE:
 
       {/* Transcription Chat */}
       {messages.length > 0 && (
-        <div className="w-full max-w-5xl glass-card p-8 border-white/5 space-y-6 bg-slate-950/30">
-          <div className="flex items-center justify-between border-b border-white/5 pb-4">
-            <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest">Protocol Transcription</h3>
-            <div className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full">Active Log</div>
+        <div className="w-full max-w-6xl bg-card-bg p-12 border border-border-color rounded-[3.5rem] space-y-10 shadow-2xl relative overflow-hidden">
+          <div className="flex items-center justify-between border-b border-border-color pb-6">
+            <h3 className="text-[11px] font-black text-text-secondary uppercase tracking-[0.4em]">Protocol Transcription</h3>
+            <div className="text-[9px] font-black text-accent uppercase tracking-[0.3em] bg-accent/10 px-4 py-1.5 rounded-full border border-accent/20 shadow-sm">Active Log</div>
           </div>
           
-          <div ref={scrollRef} className="max-h-[300px] overflow-y-auto space-y-6 pr-4 no-scrollbar">
+          <div ref={scrollRef} className="max-h-[400px] overflow-y-auto space-y-8 pr-6 no-scrollbar">
             {messages.map((m, i) => (
-              <div key={i} className={cn("flex gap-4 items-start animate-in fade-in slide-in-from-bottom-2 duration-300", m.role === "user" ? "flex-row-reverse" : "")}>
-                <div className={cn("size-8 rounded-lg flex items-center justify-center flex-shrink-0", m.role === "user" ? "bg-slate-800 text-slate-400" : "bg-emerald-500/10 text-emerald-500")}>
-                  {m.role === "user" ? <User size={14} /> : <Bot size={14} />}
+              <div key={i} className={cn("flex gap-6 items-start animate-in fade-in slide-in-from-bottom-4 duration-500", m.role === "user" ? "flex-row-reverse" : "")}>
+                <div className={cn("size-10 rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm transition-all duration-500", m.role === "user" ? "bg-bg-secondary text-text-secondary border border-border-color" : "bg-accent/10 text-accent border border-accent/20")}>
+                  {m.role === "user" ? <User size={18} /> : <Bot size={18} />}
                 </div>
-                <div className={cn("flex-1 space-y-1", m.role === "user" ? "text-right" : "")}>
-                  <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">{m.role === "assistant" ? "AI Interviewer" : userName}</p>
-                  <p className="text-sm text-slate-300 leading-relaxed font-medium">{m.content}</p>
+                <div className={cn("flex-1 space-y-2", m.role === "user" ? "text-right" : "")}>
+                  <p className="text-[9px] font-black text-text-secondary uppercase tracking-[0.4em] opacity-40">{m.role === "assistant" ? "AI Interviewer" : userName}</p>
+                  <p className={cn("text-lg leading-relaxed font-bold tracking-tight transition-colors duration-500", m.role === "assistant" ? "text-text-primary" : "text-text-secondary")}>
+                    {m.content}
+                  </p>
                 </div>
               </div>
             ))}
@@ -359,13 +401,23 @@ INTERVIEW CLOSURE:
         </div>
       )}
 
-      <div className="pb-12">
+      <div className="pb-16">
         {callStatus !== CallStatus.ACTIVE ? (
-          <button onClick={handleCall} disabled={callStatus === CallStatus.CONNECTING} className={cn("px-12 py-5 rounded-2xl font-black uppercase tracking-[0.3em] transition-all", callStatus === CallStatus.CONNECTING ? "bg-slate-800 text-slate-500" : "bg-emerald-600 text-white hover:bg-emerald-500 shadow-2xl")}>
-            {callStatus === CallStatus.CONNECTING ? "Connecting..." : "Start Practice"}
+          <button 
+            onClick={handleCall} 
+            disabled={callStatus === CallStatus.CONNECTING} 
+            className={cn("px-16 py-6 rounded-[2rem] font-black uppercase tracking-[0.4em] text-[12px] transition-all duration-500 shadow-2xl hover:scale-[1.05] active:scale-95", 
+            callStatus === CallStatus.CONNECTING ? "bg-bg-secondary text-text-secondary/30" : "bg-accent text-white hover:bg-accent/90 shadow-accent/20")}
+          >
+            {callStatus === CallStatus.CONNECTING ? "Connecting Protocol..." : "Initialize Practice"}
           </button>
         ) : (
-          <button onClick={handleDisconnect} className="px-12 py-5 rounded-2xl font-black uppercase tracking-[0.3em] bg-rose-600 text-white hover:bg-rose-500 shadow-2xl">End Session</button>
+          <button 
+            onClick={handleDisconnect} 
+            className="px-16 py-6 rounded-[2rem] font-black uppercase tracking-[0.4em] text-[12px] bg-rose-600 text-white hover:bg-rose-500 shadow-2xl shadow-rose-500/20 transition-all duration-500 hover:scale-[1.05] active:scale-95"
+          >
+            End Protocol
+          </button>
         )}
       </div>
     </div>

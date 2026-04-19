@@ -63,8 +63,16 @@ export async function getLatestInterviews(params: GetLatestInterviewsParams): Pr
     }
 }
 
+import { staticTracks } from "@/constants/tracks";
+
 export async function getInterviewsById(id: string): Promise<Interview | null> {
     try {
+        // Check static tracks first if it matches pattern
+        if (id.startsWith("tech-") || id.startsWith("edu-") || id.startsWith("fin-") || id.startsWith("mkt-") || id.startsWith("ext-")) {
+            const staticTrack = staticTracks.find(t => t.id === id);
+            if (staticTrack) return staticTrack as any;
+        }
+
         const interview = await db.collection('interviews').doc(id).get();
         if (!interview.exists) return null;
         return { id: interview.id, ...interview.data() } as Interview;

@@ -14,18 +14,27 @@ export const metadata: Metadata = {
   description: "The next generation of tutor screening and pedagogical evaluation.",
 };
 
+import { ThemeProvider } from "@/components/theme-provider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark" >
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${monaSans.variable} antialiased pattern`}
       >
-        {children}
-        <Toaster />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

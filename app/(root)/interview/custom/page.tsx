@@ -77,74 +77,83 @@ const CustomInterviewPage = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto py-20 px-6 space-y-12">
-      <div className="space-y-4">
-        <Link href="/" className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors group">
+    <div className="max-w-3xl mx-auto py-20 px-6 space-y-16">
+      <div className="space-y-6">
+        <Link href="/" className="flex items-center gap-2 text-text-secondary hover:text-accent transition-colors group">
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="text-xs font-bold uppercase tracking-widest">Back to Dashboard</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.4em]">Back to Dashboard</span>
         </Link>
-        <h1 className="text-5xl font-bold text-white tracking-tight">Configure <span className="text-emerald-500">Custom</span> Interview</h1>
-        <p className="text-slate-400">Tailor your practice session by specifying your target role, level, and technology stack.</p>
+        <h1 className="text-6xl font-black text-text-primary tracking-tighter leading-tight">
+          Configure <span className="text-accent italic">Custom</span> Session
+        </h1>
+        <p className="text-text-secondary font-bold text-lg max-w-xl">
+          Tailor your practice session by specifying your target role, experience level, and technology stack.
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="glass-card p-10 space-y-8 border-white/5">
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="role" className="text-slate-300 font-bold uppercase tracking-widest text-[10px]">What Role are you preparing for?</Label>
+      <form onSubmit={handleSubmit} className="bg-card-bg p-12 md:p-16 space-y-10 border border-border-color rounded-[3.5rem] shadow-2xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 blur-[80px] -mr-16 -mt-16 opacity-0 dark:opacity-100" />
+        
+        <div className="space-y-8">
+          <div className="space-y-3">
+            <Label htmlFor="role" className="text-text-secondary font-black uppercase tracking-[0.4em] text-[10px]">Target Role</Label>
             <Input 
               id="role"
               required
-              placeholder="e.g. Frontend Developer, Product Manager"
+              placeholder="e.g. Senior Frontend Engineer"
               value={formData.role}
               onChange={(e) => setFormData({...formData, role: e.target.value})}
-              className="bg-slate-900/50 border-white/10 h-12 text-white"
+              className="bg-bg-secondary border-border-color h-16 rounded-2xl text-text-primary font-bold placeholder:text-text-secondary/30"
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2 flex flex-col">
-              <Label className="text-slate-300 font-bold uppercase tracking-widest text-[10px] mb-2">Interview Type</Label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-3 flex flex-col">
+              <Label className="text-text-secondary font-black uppercase tracking-[0.4em] text-[10px]">Protocol Type</Label>
               <select 
                 value={formData.interviewType} 
                 onChange={(e) => setFormData({...formData, interviewType: e.target.value})}
-                className="bg-slate-900/50 border border-white/10 rounded-lg h-12 px-4 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 appearance-none cursor-pointer"
+                className="bg-bg-secondary border border-border-color rounded-2xl h-16 px-6 text-text-primary font-bold focus:outline-none focus:ring-4 focus:ring-accent/10 appearance-none cursor-pointer"
               >
-                <option value="Technical" className="bg-slate-900">Technical</option>
-                <option value="Behavioral" className="bg-slate-900">Behavioral</option>
-                <option value="HR / Cultural" className="bg-slate-900">HR / Cultural</option>
-                <option value="System Design" className="bg-slate-900">System Design</option>
+                <option value="Technical">Technical</option>
+                <option value="Behavioral">Behavioral</option>
+                <option value="HR / Cultural">HR / Cultural</option>
+                <option value="System Design">System Design</option>
               </select>
             </div>
 
-            <div className="space-y-2 flex flex-col">
-              <Label className="text-slate-300 font-bold uppercase tracking-widest text-[10px] mb-2">Experience Level</Label>
+            <div className="space-y-3 flex flex-col">
+              <Label className="text-text-secondary font-black uppercase tracking-[0.4em] text-[10px]">Seniority Level</Label>
               <select 
                 value={formData.level} 
                 onChange={(e) => setFormData({...formData, level: e.target.value})}
-                className="bg-slate-900/50 border border-white/10 rounded-lg h-12 px-4 text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/50 appearance-none cursor-pointer"
+                className="bg-bg-secondary border border-border-color rounded-2xl h-16 px-6 text-text-primary font-bold focus:outline-none focus:ring-4 focus:ring-accent/10 appearance-none cursor-pointer"
               >
-                <option value="Intern" className="bg-slate-900">Intern</option>
-                <option value="Junior" className="bg-slate-900">Junior</option>
-                <option value="Mid-Level" className="bg-slate-900">Mid-Level</option>
-                <option value="Senior" className="bg-slate-900">Senior</option>
-                <option value="Lead / Architect" className="bg-slate-900">Lead / Architect</option>
+                <option value="Intern">Intern</option>
+                <option value="Junior">Junior</option>
+                <option value="Mid-Level">Mid-Level</option>
+                <option value="Senior">Senior</option>
+                <option value="Lead / Architect">Lead / Architect</option>
               </select>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="stack" className="text-slate-300 font-bold uppercase tracking-widest text-[10px]">What's the Stack? (comma separated)</Label>
+          <div className="space-y-3">
+            <Label htmlFor="stack" className="text-text-secondary font-black uppercase tracking-[0.4em] text-[10px]">Technology Stack</Label>
             <Input 
               id="stack"
-              placeholder="e.g. React, TypeScript, Node.js, AWS"
+              placeholder="e.g. React, TypeScript, GraphQL"
               value={formData.stack}
               onChange={(e) => setFormData({...formData, stack: e.target.value})}
-              className="bg-slate-900/50 border-white/10 h-12 text-white"
+              className="bg-bg-secondary border-border-color h-16 rounded-2xl text-text-primary font-bold placeholder:text-text-secondary/30"
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="amount" className="text-slate-300 font-bold uppercase tracking-widest text-[10px]">Number of Questions ({formData.amount})</Label>
+          <div className="space-y-6 pt-4">
+            <div className="flex justify-between items-end">
+              <Label htmlFor="amount" className="text-text-secondary font-black uppercase tracking-[0.4em] text-[10px]">Question Depth</Label>
+              <span className="text-2xl font-black text-accent">{formData.amount}</span>
+            </div>
             <input 
               type="range"
               id="amount"
@@ -153,11 +162,11 @@ const CustomInterviewPage = () => {
               step="1"
               value={formData.amount}
               onChange={(e) => setFormData({...formData, amount: parseInt(e.target.value)})}
-              className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+              className="w-full h-3 bg-bg-secondary rounded-full appearance-none cursor-pointer accent-accent border border-border-color"
             />
-            <div className="flex justify-between text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-              <span>3 Questions</span>
-              <span>10 Questions</span>
+            <div className="flex justify-between text-[9px] text-text-secondary/40 font-black uppercase tracking-[0.3em]">
+              <span>Minimal</span>
+              <span>Exhaustive</span>
             </div>
           </div>
         </div>
@@ -165,10 +174,10 @@ const CustomInterviewPage = () => {
         <Button 
           type="submit" 
           disabled={loading}
-          className="w-full h-14 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold uppercase tracking-[0.2em] shadow-2xl transition-all flex items-center justify-center gap-3"
+          className="w-full h-20 bg-accent hover:bg-accent/90 text-white rounded-[2rem] font-black uppercase tracking-[0.3em] text-[12px] shadow-2xl shadow-accent/20 transition-all duration-500 flex items-center justify-center gap-4 hover:scale-[1.02] active:scale-95"
         >
-          {loading ? <Loader2 className="animate-spin" /> : <Sparkles size={18} />}
-          {loading ? "Initializing..." : "Launch Custom Session"}
+          {loading ? <Loader2 className="animate-spin" /> : <Sparkles size={20} />}
+          {loading ? "Initializing Protocol..." : "Launch Custom Session"}
         </Button>
       </form>
     </div>

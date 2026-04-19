@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Search } from 'lucide-react';
 import InterviewCard from './InterviewCard';
-import { Input } from './ui/input';
 
 interface TrackListProps {
   initialTracks: any[];
@@ -29,29 +28,29 @@ const TrackList = ({ initialTracks, userId }: TrackListProps) => {
   const types = ["All", "Technical", "Behavioral", "System Design", "Pedagogical"];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       {/* Search & Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col lg:flex-row gap-6">
         <div className="relative flex-1 group">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-emerald-500 transition-colors" size={18} />
+          <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-text-secondary group-focus-within:text-accent transition-colors" size={20} />
           <input 
             type="text"
-            placeholder="Search roles or technologies (e.g. React, Manager)..."
+            placeholder="Search roles or technologies..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-14 pl-12 pr-4 bg-slate-900/50 border border-slate-800 rounded-2xl text-white placeholder:text-slate-600 focus:outline-none focus:border-emerald-500/50 focus:bg-slate-900 transition-all shadow-inner"
+            className="w-full h-16 pl-14 pr-6 bg-card-bg border border-border-color rounded-[1.5rem] text-text-primary placeholder:text-text-secondary/50 focus:outline-none focus:ring-4 focus:ring-accent/10 transition-all shadow-sm font-bold"
           />
         </div>
         
-        <div className="flex gap-2 p-1 bg-slate-900/50 border border-slate-800 rounded-2xl overflow-x-auto no-scrollbar">
+        <div className="flex gap-2 p-2 bg-bg-secondary border border-border-color rounded-[1.5rem] overflow-x-auto no-scrollbar shadow-inner">
           {types.map((type) => (
             <button
               key={type}
               onClick={() => setFilterType(type)}
-              className={`px-6 h-12 rounded-xl text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${
+              className={`px-8 h-12 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${
                 filterType === type 
-                  ? "bg-emerald-600 text-white shadow-lg" 
-                  : "text-slate-500 hover:text-slate-300 hover:bg-slate-800"
+                  ? "bg-accent text-white shadow-lg shadow-accent/20" 
+                  : "text-text-secondary hover:text-accent hover:bg-accent/5"
               }`}
             >
               {type}
@@ -62,7 +61,7 @@ const TrackList = ({ initialTracks, userId }: TrackListProps) => {
 
       {/* Grid */}
       {filteredTracks.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {filteredTracks.map((track) => (
             <InterviewCard
               key={track.id}
@@ -76,14 +75,14 @@ const TrackList = ({ initialTracks, userId }: TrackListProps) => {
           ))}
         </div>
       ) : (
-        <div className="glass-card p-20 text-center border-slate-800">
-           <Search size={40} className="mx-auto text-slate-700 mb-4 opacity-20" />
-           <p className="text-slate-500 font-medium">No tracks found matching "{searchQuery}"</p>
+        <div className="bg-card-bg p-24 text-center border-2 border-dashed border-border-color rounded-[3rem]">
+           <Search size={48} className="mx-auto text-text-secondary mb-6 opacity-20" />
+           <p className="text-text-secondary font-black uppercase tracking-[0.2em] text-sm">Protocol "{searchQuery}" Not Found</p>
            <button 
             onClick={() => {setSearchQuery(""); setFilterType("All");}}
-            className="mt-4 text-emerald-500 text-xs font-bold uppercase tracking-widest hover:underline"
+            className="mt-6 text-accent text-[10px] font-black uppercase tracking-[0.4em] hover:underline"
            >
-             Clear Filters
+             Reset Intelligence Feed
            </button>
         </div>
       )}

@@ -56,6 +56,9 @@ const InterviewDetails = async ({ params }: RouteParams) => {
         feedbackId={feedback?.id}
         persona={user?.persona}
         voiceEnabled={user?.voiceEnabled}
+        role={interview.role}
+        interviewType={interview.type}
+        techstack={interview.techstack}
       />
     </>
   );

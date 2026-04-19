@@ -1,69 +1,57 @@
-import { BookOpen, Code, Terminal, MessageSquare, Zap } from "lucide-react";
+import { Book, Video, FileText, Globe } from "lucide-react";
 
-function ResourcesPage() {
+async function ResourcesPage() {
   return (
-    <div className="space-y-12 pb-20 max-w-5xl mx-auto">
-      <div className="border-b border-white/5 pb-10">
-        <div className="space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium">
-            Knowledge Vault
+    <div className="max-w-6xl mx-auto py-20 px-6 space-y-16">
+      <div className="border-b border-border-color pb-12">
+        <div className="space-y-6">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-[10px] font-black uppercase tracking-[0.3em]">
+            Knowledge Base
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
-            Curated <span className="text-emerald-500 italic lowercase">Resources</span>
+          <h1 className="text-6xl font-black text-text-primary tracking-tighter leading-none">
+            Learning <span className="text-accent italic">Vault</span>
           </h1>
-          <p className="text-slate-500 max-w-xl">
-            Access elite pedagogical materials, concept simplification guides, and student empathy protocols.
+          <p className="text-text-secondary font-bold text-lg max-w-xl">
+            Curated materials to supplement your AI interview simulations and accelerate your career growth.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         <ResourceCard 
-          icon={<Code size={24} />} 
-          title="Pedagogical Core" 
-          description="Master the fundamentals of teaching and the art of explaining complex concepts simply."
-          count="42 Modules"
+          icon={<Book />} 
+          title="Pedagogy Guide" 
+          description="Master the art of teaching and clear communication with our structured guidelines."
         />
         <ResourceCard 
-          icon={<Terminal size={24} />} 
-          title="Student Psychology" 
-          description="Learn to navigate student frustration and build trust through empathy-driven communication."
-          count="18 Guides"
+          icon={<Video />} 
+          title="Simulation Analysis" 
+          description="Watch breakdowns of top-performing interview sessions and learn from the best."
         />
         <ResourceCard 
-          icon={<MessageSquare size={24} />} 
-          title="Concept Simplification" 
-          description="Refine your ability to break down advanced topics for K-12 and beginner audiences."
-          count="25 Protocols"
+          icon={<FileText />} 
+          title="Resume Protocol" 
+          description="Optimize your professional profile to pass elite screening processes."
         />
         <ResourceCard 
-          icon={<Zap size={24} />} 
-          title="Engagement Drills" 
-          description="Rapid-fire scenarios to sharpen your reflexes for handling confused or difficult students."
-          count="Unlimited"
+          icon={<Globe />} 
+          title="Industry Standards" 
+          description="Stay updated with the latest expectations from top-tier tech firms."
         />
       </div>
     </div>
   );
 }
 
-function ResourceCard({ icon, title, description, count }: { icon: any, title: string, description: string, count: string }) {
+function ResourceCard({ icon, title, description }: { icon: any, title: string, description: string }) {
   return (
-    <div className="glass-card p-8 border-white/5 hover:border-emerald-500/30 transition-all group flex flex-col justify-between h-full">
-      <div className="space-y-6">
-        <div className="size-12 rounded-xl bg-slate-800 border border-white/5 flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
-          {icon}
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-xl font-bold text-white tracking-tight">{title}</h3>
-          <p className="text-sm text-slate-500 leading-relaxed">{description}</p>
-        </div>
+    <div className="bg-card-bg p-10 border border-border-color rounded-[3rem] space-y-6 hover:shadow-xl transition-all duration-500 hover:-translate-y-1 group shadow-sm">
+      <div className="size-14 rounded-2xl bg-bg-secondary border border-border-color flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all duration-500 shadow-inner">
+        {icon}
       </div>
-      <div className="mt-8 pt-6 border-t border-white/5 flex justify-between items-center">
-        <span className="text-[10px] font-black uppercase tracking-widest text-slate-600">{count}</span>
-        <div className="size-8 rounded-full bg-white/5 flex items-center justify-center text-slate-500 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-all cursor-pointer">
-           <Zap size={14} />
-        </div>
+      <div className="space-y-3">
+        <h3 className="text-2xl font-black text-text-primary tracking-tight">{title}</h3>
+        <p className="text-text-secondary font-bold leading-relaxed">{description}</p>
       </div>
     </div>
   );

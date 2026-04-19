@@ -67,6 +67,24 @@ export async function signIn(params: SignInParams) {
     }
 }
 
+export async function syncUser(params: { uid: string, name: string, email: string, idToken: string }) {
+    const { uid, name, email, idToken } = params;
+    try {
+        const userRef = db.collection('users').doc(uid);
+        const userDoc = await userRef.get();
+
+        if (!userDoc.exists) {
+            await userRef.set({ name, email, createdAt: new Date().toISOString() });
+        }
+
+        await setSessionCookie(idToken);
+        return { success: true };
+    } catch (e) {
+        console.error("Error syncing user:", e);
+        return { success: false };
+    }
+}
+
 export async function setSessionCookie(idToken: string){
     const cookieStore = await cookies();
 

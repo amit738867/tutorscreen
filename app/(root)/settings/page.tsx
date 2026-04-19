@@ -1,150 +1,109 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { Settings as SettingsIcon, Bell, Lock, Eye, Monitor, Brain, Mic, Trash2, ShieldAlert } from "lucide-react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { getCurrentUser } from "@/lib/actions/auth.action";
-import { updateUserPreferences, clearUserHistory } from "@/lib/actions/general.action";
-import { toast } from "sonner"; // Assuming sonner is available or similar
+import { Switch } from "@/components/ui/switch";
+import { toast } from "sonner";
+import { Bell, Shield, Eye, Trash2, Cpu } from "lucide-react";
 
-function SettingsPage() {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [confirmClear, setConfirmClear] = useState(false);
+const SettingsPage = () => {
+  const [notifications, setNotifications] = useState(true);
+  const [analytics, setAnalytics] = useState(true);
+  const [isClearing, setIsClearing] = useState(false);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const userData = await getCurrentUser();
-      setUser(userData);
-      setLoading(false);
-    };
-    fetchUser();
-  }, []);
-
-  const handleToggle = async (key: string, value: any) => {
-    if (!user) return;
-    const updatedUser = { ...user, [key]: value };
-    setUser(updatedUser);
-    
-    setSaving(true);
-    await updateUserPreferences(user.id, { [key]: value });
-    setSaving(false);
+  const handleClearData = () => {
+    setIsClearing(true);
+    setTimeout(() => {
+      toast.success("Protocol cache purged successfully.");
+      setIsClearing(false);
+    }, 1500);
   };
-
-  const handleClear = async () => {
-    if (!confirmClear) {
-      setConfirmClear(true);
-      return;
-    }
-    
-    setSaving(true);
-    await clearUserHistory(user.id);
-    setConfirmClear(false);
-    setSaving(false);
-    alert("History cleared successfully!");
-  };
-
-  if (loading) return <div className="p-20 text-center text-slate-500 uppercase tracking-widest text-xs font-bold animate-pulse">Synchronizing Settings...</div>;
 
   return (
-    <div className="space-y-12 pb-20 max-w-4xl mx-auto">
-      <div className="border-b border-white/5 pb-10">
-        <div className="space-y-4 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium">
-            System Config
+    <div className="max-w-4xl mx-auto py-20 px-6 space-y-16">
+      <div className="border-b border-border-color pb-12">
+        <div className="space-y-6">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-[10px] font-black uppercase tracking-[0.3em]">
+            System Control
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
-            Interface <span className="text-emerald-500 italic lowercase">Settings</span>
+          <h1 className="text-6xl font-black text-text-primary tracking-tighter leading-none">
+            System <span className="text-accent italic">Settings</span>
           </h1>
-          <p className="text-slate-500">Configure your intelligence core and data privacy preferences.</p>
+          <p className="text-text-secondary font-bold text-lg max-w-xl">
+            Configure your technical environment and operational parameters.
+          </p>
         </div>
       </div>
 
-      <div className="space-y-6">
-        <SettingsSection title="Intelligence Core">
-          <SettingsToggle 
-            icon={<Brain size={18} />} 
-            label="Recruiter Mode" 
-            description="AI adopts a more critical, professional tone (v/s Mentor mode)" 
-            active={user?.persona === "recruiter"}
-            onToggle={() => handleToggle("persona", user?.persona === "recruiter" ? "mentor" : "recruiter")}
+      <div className="space-y-12">
+        <SettingsSection title="Operational Protocols">
+          <SettingsItem 
+            icon={<Bell size={20} />} 
+            label="Real-time Notifications" 
+            description="Receive immediate feedback on session completion."
+            action={<Switch checked={notifications} onCheckedChange={setNotifications} />}
+          />
+          <SettingsItem 
+            icon={<Cpu size={20} />} 
+            label="Advanced Analytics" 
+            description="Enable deep-learning processing for pedagogy metrics."
+            action={<Switch checked={analytics} onCheckedChange={setAnalytics} />}
           />
         </SettingsSection>
 
-        <SettingsSection title="Communication">
-          <SettingsToggle 
-            icon={<Mic size={18} />} 
-            label="AI Voice Interaction" 
-            description="Enable high-fidelity speech synthesis during sessions" 
-            active={user?.voiceEnabled !== false}
-            onToggle={() => handleToggle("voiceEnabled", user?.voiceEnabled === false)}
+        <SettingsSection title="Security & Privacy">
+          <SettingsItem 
+            icon={<Shield size={20} />} 
+            label="Anonymous Benchmarking" 
+            description="Contribute to global scores without revealing identity."
+            action={<Switch checked={true} />}
           />
-        </SettingsSection>
-
-        <SettingsSection title="Data Management">
-          <div className="flex items-center justify-between p-2 rounded-xl border border-rose-500/10 bg-rose-500/5">
-             <div className="flex items-center gap-4 p-4">
-                <div className="size-10 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-500">
-                  <Trash2 size={18} />
-                </div>
-                <div>
-                  <p className="text-white font-bold text-sm">Clear History</p>
-                  <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Permanently delete all sessions from the Vault</p>
-                </div>
-             </div>
-             <Button 
-                onClick={handleClear}
-                disabled={saving}
-                variant="destructive" 
-                className={`mr-4 h-10 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${confirmClear ? "bg-rose-600 animate-pulse" : "bg-slate-800 hover:bg-rose-900"}`}
+          <div className="pt-6">
+             <button 
+                onClick={handleClearData}
+                disabled={isClearing}
+                className="flex items-center gap-4 p-6 w-full bg-rose-500/5 border border-rose-500/20 rounded-[2rem] hover:bg-rose-500/10 transition-all group"
              >
-                {confirmClear ? "Click to Confirm" : "Purge Data"}
-             </Button>
+                <div className="size-12 rounded-xl bg-rose-500 text-white flex items-center justify-center shadow-lg shadow-rose-500/20">
+                   <Trash2 size={24} />
+                </div>
+                <div className="text-left">
+                  <p className="text-text-primary font-black text-lg">Clear History</p>
+                  <p className="text-text-secondary font-bold text-sm">Permanently delete all session records and data.</p>
+                </div>
+                <div className="ml-auto text-rose-500 font-black uppercase tracking-[0.2em] text-[10px] group-hover:underline">
+                   {isClearing ? "Purging..." : "Initialize Purge"}
+                </div>
+             </button>
           </div>
         </SettingsSection>
-        
-        {saving && (
-          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-emerald-500 text-slate-950 px-6 py-2 rounded-full font-bold text-xs uppercase tracking-widest shadow-2xl animate-bounce">
-            Saving Preferences...
-          </div>
-        )}
       </div>
     </div>
   );
-}
+};
 
-function SettingsSection({ title, children }: { title: string, children: React.ReactNode }) {
-  return (
-    <div className="glass-card p-8 space-y-6 border-white/5">
-      <h3 className="text-sm font-bold text-white uppercase tracking-[0.2em] opacity-60 border-b border-white/5 pb-4">{title}</h3>
-      <div className="space-y-4">
+const SettingsSection = ({ title, children }: { title: string, children: React.ReactNode }) => (
+  <div className="space-y-8">
+      <h3 className="text-[11px] font-black text-text-primary uppercase tracking-[0.3em] opacity-60 border-b border-border-color pb-6">{title}</h3>
+      <div className="space-y-6">
         {children}
       </div>
-    </div>
-  );
-}
+  </div>
+);
 
-function SettingsToggle({ icon, label, description, active = false, onToggle }: { icon: any, label: string, description: string, active?: boolean, onToggle: () => void }) {
-  return (
-    <div className="flex items-center justify-between group">
-      <div className="flex items-center gap-4">
-        <div className={`size-10 rounded-xl border transition-all flex items-center justify-center ${active ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' : 'bg-slate-800 border-white/5 text-slate-500 group-hover:text-slate-400'}`}>
+const SettingsItem = ({ icon, label, description, action }: { icon: any, label: string, description: string, action: React.ReactNode }) => (
+  <div className="bg-card-bg p-8 border border-border-color rounded-[2.5rem] flex items-center justify-between shadow-sm">
+    <div className="flex items-center gap-6">
+       <div className="size-12 rounded-xl bg-bg-secondary border border-border-color flex items-center justify-center text-accent shadow-inner">
           {icon}
-        </div>
-        <div>
-          <p className="text-white font-medium">{label}</p>
-          <p className="text-xs text-slate-600">{description}</p>
-        </div>
-      </div>
-      <div 
-        onClick={onToggle}
-        className={`w-12 h-6 rounded-full transition-all relative cursor-pointer ${active ? 'bg-emerald-600 shadow-[0_0_20px_-5px_rgba(16,185,129,0.5)]' : 'bg-slate-800 border border-white/5 hover:border-white/10'}`}
-      >
-         <div className={`absolute top-1 left-1 size-4 bg-white rounded-full transition-transform duration-300 ${active ? 'translate-x-6 shadow-lg' : 'translate-x-0'}`} />
-      </div>
+       </div>
+       <div>
+          <p className="text-text-primary font-black text-lg tracking-tight">{label}</p>
+          <p className="text-text-secondary font-bold text-sm">{description}</p>
+       </div>
     </div>
-  );
-}
+    {action}
+  </div>
+);
 
 export default SettingsPage;

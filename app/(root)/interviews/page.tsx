@@ -14,15 +14,15 @@ async function InterviewsPage() {
 
   return (
     <div className="space-y-12 pb-20">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-10">
-        <div className="space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-border-color pb-12">
+        <div className="space-y-6">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-[10px] font-black uppercase tracking-[0.3em]">
             Roadmap
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
-            Available <span className="text-emerald-500 italic lowercase">Tracks</span>
+          <h1 className="text-6xl font-black text-text-primary tracking-tighter leading-none">
+            Available <span className="text-accent italic lowercase">Tracks</span>
           </h1>
-          <p className="text-slate-500 max-w-xl">
+          <p className="text-text-secondary max-w-xl font-bold text-lg">
             Explore 75+ public interview modules calibrated by industry experts. Use search to find your specific role.
           </p>
         </div>

@@ -10,23 +10,23 @@ async function HistoryPage() {
 
   return (
     <div className="space-y-12 pb-20 max-w-6xl mx-auto">
-      <div className="border-b border-white/5 pb-10">
-        <div className="space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium">
+      <div className="border-b border-border-color pb-12">
+        <div className="space-y-6">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-[10px] font-black uppercase tracking-[0.3em]">
             <BookOpen size={14} />
             The Vault
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight leading-tight">
-            Session <span className="text-emerald-500 italic lowercase">History</span>
+          <h1 className="text-6xl font-black text-text-primary tracking-tighter leading-none">
+            Session <span className="text-accent italic">History</span>
           </h1>
-          <p className="text-slate-500 max-w-xl font-medium">
+          <p className="text-text-secondary max-w-xl font-bold text-lg">
             A comprehensive record of your previous AI interview simulations and analyzed performance data.
           </p>
         </div>
       </div>
 
       {interviews && interviews.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {interviews.map((interview: any) => (
             <InterviewCard
               key={interview.id}
@@ -41,12 +41,12 @@ async function HistoryPage() {
           ))}
         </div>
       ) : (
-        <div className="glass-card p-24 text-center border-dashed border-white/5 bg-slate-900/40">
-           <div className="size-16 rounded-3xl bg-slate-800 flex items-center justify-center mx-auto mb-6 text-slate-600">
+        <div className="bg-card-bg p-32 text-center border-2 border-dashed border-border-color rounded-[3.5rem] shadow-sm">
+           <div className="size-20 rounded-[2rem] bg-bg-secondary border border-border-color flex items-center justify-center mx-auto mb-8 text-text-secondary/40 shadow-inner">
               <Search size={32} />
            </div>
-           <h3 className="text-2xl font-bold text-white mb-2">Vault is Empty</h3>
-           <p className="text-slate-500 text-sm font-medium max-w-xs mx-auto">Complete a practice session to start building your professional performance record.</p>
+           <h3 className="text-3xl font-black text-text-primary tracking-tight mb-3">Vault is Empty</h3>
+           <p className="text-text-secondary text-sm font-bold max-w-xs mx-auto">Complete a practice session to start building your professional performance record.</p>
         </div>
       )}
     </div>

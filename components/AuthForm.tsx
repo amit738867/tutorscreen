@@ -7,10 +7,15 @@ import { auth } from "@/firebase/client";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup
+} from "firebase/auth";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { signIn, signUp } from "@/lib/actions/auth.action";
+import { signIn, signUp, syncUser } from "@/lib/actions/auth.action";
 import FormField from "./FormField";
 import { Eye, EyeOff, Loader2, Shield, Zap, Users } from "lucide-react";
 import { useState } from "react";
@@ -27,6 +32,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,7 +63,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
           toast.error(result.message);
           return;
         }
-        toast.success("Account created successfully. Please sign in.");
+        toast.success("Protocol Registered. Please identify.");
         router.push("/sign-in");
       } else {
         const { email, password } = data;
@@ -68,206 +74,241 @@ const AuthForm = ({ type }: { type: FormType }) => {
         );
         const idToken = await userCredential.user.getIdToken();
         if (!idToken) {
-          toast.error("Sign in Failed. Please try again.");
+          toast.error("Handshake Failed. Retry Protocol.");
           return;
         }
         await signIn({
           email,
           idToken,
         });
-        toast.success("Signed in successfully.");
+        toast.success("Handshake Successful. Access Granted.");
         router.push("/");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
-      toast.error(`There was an error: ${error}`);
+      toast.error(`Protocol Error: ${error.message || error}`);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      const idToken = await user.getIdToken();
+
+      const syncResult = await syncUser({
+        uid: user.uid,
+        name: user.displayName || "Google User",
+        email: user.email!,
+        idToken,
+      });
+
+      if (syncResult.success) {
+        toast.success("Google Handshake Successful.");
+        router.push("/");
+      } else {
+        toast.error("Handshake Failed during sync.");
+      }
+    } catch (error: any) {
+      console.error("Google Auth Error:", error);
+      toast.error(`Google Protocol Error: ${error.message}`);
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
   const isSignIn = type === "sign-in";
 
   return (
-    <>
-    {/* <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden"> */}
-      {/* Background decoration - Full screen coverage */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 right-0 h-screen w-screen rounded-full bg-indigo-500 opacity-10 blur-3xl transform translate-x-1/3 -translate-y-1/3"></div>
-        <div className="absolute bottom-0 left-0 h-screen w-screen rounded-full bg-purple-500 opacity-10 blur-3xl transform -translate-x-1/3 translate-y-1/3"></div>
-        <div className="absolute top-1/2 left-1/2 h-screen w-screen rounded-full bg-blue-500 opacity-5 blur-3xl transform -translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute top-1/3 right-1/3 h-screen w-screen rounded-full bg-pink-500 opacity-5 blur-3xl transform translate-x-1/3 -translate-y-1/3"></div>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center min-h-[80vh]">
+      {/* Left Side - Intelligence Branding */}
+      <div className="hidden lg:flex flex-col space-y-12">
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-accent rounded-[1.2rem] shadow-lg shadow-accent/20">
+              <Image src="/logo.svg" alt="logo" height={32} width={32} className="invert brightness-0" />
+            </div>
+            <div className="flex flex-col">
+              <h1 className="text-3xl font-black text-text-primary tracking-tighter">
+                TutorScreen
+              </h1>
+              <p className="text-[10px] font-bold text-accent uppercase tracking-[0.4em] -mt-1">
+                Elite Protocol
+              </p>
+            </div>
+          </div>
+          
+          <h2 className="text-6xl font-black text-text-primary leading-[0.95] tracking-tighter">
+            Evaluating <br />
+            <span className="text-accent italic">Excellence.</span>
+          </h2>
+          
+          <p className="text-xl text-text-secondary font-medium max-w-md leading-relaxed">
+            The next generation of pedagogical assessment and interview training for elite educators.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+           <FeatureItem icon={<Zap size={18} />} title="AI Logic Engines" description="Hyper-realistic pedagogical simulations." />
+           <FeatureItem icon={<Shield size={18} />} title="Evidence Based" description="Direct transcript analysis and metrics." />
+           <FeatureItem icon={<Users size={18} />} title="Cross Industry" description="Specialized tracks for every professional." />
+        </div>
       </div>
 
-      <div className="relative z-10 w-full h-full flex items-center justify-center p-4">
-        <div className="w-full max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 items-center min-h-[calc(100vh-2rem)]">
-            {/* Left Side - Branding and Features */}
-            <div className="hidden lg:flex flex-col justify-center h-full pr-8">
-              <div className="text-left">
-                <div className="flex items-center gap-3 mb-8">
-                  <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl">
-                    <Image src="/logo.svg" alt="logo" height={48} width={56} />
-                  </div>
-                  <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                    DevPrep
-                  </h1>
-                </div>
-                
-                <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
-                  Master Your Interview Skills with AI
-                </h2>
-                
-                <p className="text-xl text-gray-600 dark:text-gray-300 mb-12 max-w-lg">
-                  Practice realistic interviews, get instant feedback, and land your dream job with confidence.
-                </p>
-                
-                <div className="space-y-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl">
-                      <Zap className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">AI-Powered Practice</h3>
-                      <p className="text-gray-600 dark:text-gray-400">Realistic interview simulations with advanced AI technology</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
-                      <Users className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Industry Expertise</h3>
-                      <p className="text-gray-600 dark:text-gray-400">Questions tailored to your specific industry and role</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-4">
-                    <div className="flex-shrink-0 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-                      <Shield className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Detailed Feedback</h3>
-                      <p className="text-gray-600 dark:text-gray-400">Comprehensive analysis to improve your performance</p>
-                    </div>
-                  </div>
-                </div>
+      {/* Right Side - Auth Card */}
+      <div className="glass-card p-12 md:p-16 border border-border-color bg-card-bg shadow-xl rounded-[3rem] transition-all duration-500 relative overflow-hidden">
+        {/* Subtle decorative glow in dark mode only */}
+        <div className="absolute top-0 right-0 w-32 h-32 bg-accent/5 blur-[80px] -mr-16 -mt-16 opacity-0 dark:opacity-100" />
+
+        <div className="lg:hidden flex flex-col items-center mb-12">
+           <div className="p-3 bg-accent rounded-2xl mb-4 shadow-lg shadow-accent/20">
+              <Image src="/logo.svg" alt="logo" height={24} width={24} className="invert brightness-0" />
+           </div>
+           <h2 className="text-2xl font-black text-text-primary tracking-tighter uppercase">TutorScreen</h2>
+        </div>
+
+        <div className="space-y-2 mb-10">
+          <h3 className="text-3xl font-bold text-text-primary tracking-tight">
+            {isSignIn ? "Access Hub" : "Initialize Account"}
+          </h3>
+          <p className="text-text-secondary text-sm font-semibold">
+            {isSignIn 
+              ? "Identify yourself to enter the protocol dashboard." 
+              : "Register your identity to start your pedagogical journey."}
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {!isSignIn && (
+                <FormField
+                  control={form.control}
+                  name="name"
+                  label="Full Name"
+                  placeholder="Enter legal name"
+                  type="text"
+                />
+              )}
+              <FormField
+                control={form.control}
+                name="email"
+                label="Email Identity"
+                placeholder="operator@tutorscreen.pro"
+                type="email"
+              />
+              <div className="relative">
+                <FormField
+                  control={form.control}
+                  name="password"
+                  label="Security Key"
+                  placeholder="••••••••"
+                  type={showPassword ? "text" : "password"}
+                />
+                <button
+                  type="button"
+                  className="absolute right-4 top-10 text-text-secondary hover:text-accent transition-colors"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
+              
+              <Button
+                className="w-full h-16 rounded-[1.5rem] bg-accent hover:bg-accent/90 text-white font-black uppercase tracking-[0.2em] text-[11px] shadow-lg shadow-accent/20 transition-all duration-500 hover:scale-[1.02] disabled:opacity-50"
+                type="submit"
+                disabled={isLoading || isGoogleLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-3 h-4 w-4 animate-spin" />
+                    {isSignIn ? "Authorizing..." : "Registering..."}
+                  </>
+                ) : (
+                  <>{isSignIn ? "Start Protocol" : "Register Identity"}</>
+                )}
+              </Button>
+            </form>
+          </Form>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-border-color" />
             </div>
-
-            {/* Right Side - Auth Form - Full width without card */}
-            <div className="flex flex-col justify-center h-full pl-8 w-full">
-              {/* Logo and Brand for mobile */}
-              <div className="lg:hidden text-center mb-10">
-                <div className="inline-flex items-center justify-center p-3 bg-white dark:bg-gray-800 rounded-full shadow-lg mb-4">
-                  <Image src="/logo.svg" alt="logo" height={40} width={48} />
-                </div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">DevPrep</h1>
-                <p className="text-gray-600 dark:text-gray-300">Practice job interviews with AI</p>
-              </div>
-
-              {/* Form content without card container */}
-              <div className="w-full">
-                <div className="mb-10">
-                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
-                    {isSignIn ? "Welcome Back" : "Create Account"}
-                  </h2>
-                  <p className="text-lg text-gray-600 dark:text-gray-400">
-                    {isSignIn 
-                      ? "Sign in to continue to your account" 
-                      : "Join thousands of professionals improving their interview skills"}
-                  </p>
-                </div>
-
-                <Form {...form}>
-                  <form
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="w-full space-y-7"
-                  >
-                    {!isSignIn && (
-                      <FormField
-                        control={form.control}
-                        name="name"
-                        label="Full Name"
-                        placeholder="Enter your full name"
-                        type="text"
-                      />
-                    )}
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      label="Email Address"
-                      placeholder="Enter your email"
-                      type="email"
-                    />
-                    <div className="relative">
-                      <FormField
-                        control={form.control}
-                        name="password"
-                        label="Password"
-                        placeholder="Enter your password"
-                        type={showPassword ? "text" : "password"}
-                      />
-                      <button
-                        type="button"
-                        className="absolute right-3 top-9 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                      </button>
-                    </div>
-                    <Button
-                      className="w-full py-4 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold text-lg shadow-lg transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      type="submit"
-                      disabled={isLoading}
-                    >
-                      {isLoading ? (
-                        <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          {isSignIn ? "Signing In..." : "Creating Account..."}
-                        </>
-                      ) : (
-                        <>{isSignIn ? "Sign In" : "Create Account"}</>
-                      )}
-                    </Button>
-                  </form>
-                </Form>
-
-                <div className="mt-10 text-center">
-                  <p className="text-gray-600 dark:text-gray-400">
-                    {isSignIn ? "Don't have an account?" : "Already have an account?"}
-                    <Link
-                      href={!isSignIn ? "/sign-in" : "/sign-up"}
-                      className="font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 ml-1 transition-colors duration-200"
-                    >
-                      {!isSignIn ? "Sign In" : "Sign Up"}
-                    </Link>
-                  </p>
-                </div>
-              </div>
-
-              {/* Additional Links */}
-              <div className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-                <p>
-                  By continuing, you agree to DevPrep's{" "}
-                  <Link href="/terms" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-200">
-                    Terms of Service
-                  </Link>{" "}
-                  and{" "}
-                  <Link href="/privacy" className="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors duration-200">
-                    Privacy Policy
-                  </Link>
-                </p>
-              </div>
+            <div className="relative flex justify-center text-[10px] uppercase tracking-[0.3em] font-black">
+              <span className="bg-card-bg px-4 text-text-secondary">Or Identification Via</span>
             </div>
+          </div>
+
+          <Button
+            type="button"
+            variant="outline"
+            disabled={isLoading || isGoogleLoading}
+            onClick={handleGoogleSignIn}
+            className="w-full h-16 rounded-[1.5rem] bg-bg-secondary border border-border-color text-text-primary font-bold hover:bg-bg-primary transition-all duration-500 flex items-center justify-center gap-3 shadow-sm hover:shadow-md"
+          >
+            {isGoogleLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24">
+                <path
+                  fill="#4285F4"
+                  d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                />
+                <path
+                  fill="#34A853"
+                  d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                />
+                <path
+                  fill="#FBBC05"
+                  d="M5.84 14.1c-.22-.67-.35-1.39-.35-2.1s.13-1.43.35-2.1V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.83z"
+                />
+                <path
+                  fill="#EA4335"
+                  d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.83c.87-2.6 3.3-4.52 6.16-4.52z"
+                />
+              </svg>
+            )}
+            {isGoogleLoading ? "Syncing..." : "Continue with Google"}
+          </Button>
+        </div>
+
+        <div className="mt-12 flex flex-col items-center gap-6">
+          <p className="text-sm text-text-secondary font-bold">
+            {isSignIn ? "New Operator?" : "Existing Identity?"}
+            <Link
+              href={!isSignIn ? "/sign-in" : "/sign-up"}
+              className="text-accent font-black ml-2 hover:underline tracking-tight"
+            >
+              {!isSignIn ? "Sign In" : "Sign Up"}
+            </Link>
+          </p>
+          
+          <div className="flex items-center gap-4 text-[9px] font-black text-text-secondary uppercase tracking-[0.2em]">
+             <span className="hover:text-accent cursor-pointer transition-colors">Terms of Protocol</span>
+             <div className="size-1 rounded-full bg-border-color" />
+             <span className="hover:text-accent cursor-pointer transition-colors">Privacy Shield</span>
           </div>
         </div>
       </div>
-    {/* </div> */}
-    {/* </div> */}
-    </>
+    </div>
   );
 };
+
+const FeatureItem = ({ icon, title, description }: { icon: any, title: string, description: string }) => (
+  <div className="flex items-center gap-4 group">
+    <div className="size-10 rounded-xl bg-bg-secondary flex items-center justify-center text-accent border border-border-color group-hover:bg-accent group-hover:text-white transition-all duration-500 shadow-sm">
+      {icon}
+    </div>
+    <div className="flex flex-col">
+       <span className="text-sm font-bold text-text-primary tracking-tight">{title}</span>
+       <span className="text-[10px] text-text-secondary font-bold">{description}</span>
+    </div>
+  </div>
+);
 
 export default AuthForm;

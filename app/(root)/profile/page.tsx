@@ -1,44 +1,41 @@
 import { getCurrentUser } from "@/lib/actions/auth.action";
-import { User, Mail, Calendar, ShieldCheck } from "lucide-react";
+import { User, Mail, Shield, Zap } from "lucide-react";
 
 async function ProfilePage() {
   const user = await getCurrentUser();
 
   return (
-    <div className="space-y-12 pb-20 max-w-4xl mx-auto">
-      <div className="border-b border-white/5 pb-10">
-        <div className="space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium">
-            Account Entity
+    <div className="max-w-4xl mx-auto py-20 px-6 space-y-12">
+      <div className="border-b border-border-color pb-12">
+        <div className="space-y-6">
+          <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-[10px] font-black uppercase tracking-[0.3em]">
+            User Identity
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white tracking-tight">
-            Operator <span className="text-emerald-500 italic lowercase">Profile</span>
+          <h1 className="text-6xl font-black text-text-primary tracking-tighter leading-none">
+            Operator <span className="text-accent italic">Profile</span>
           </h1>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="md:col-span-1 space-y-6">
-          <div className="glass-card p-8 flex flex-col items-center text-center space-y-4 border-white/10">
-            <div className="size-32 rounded-3xl bg-slate-800 border-2 border-slate-700 flex items-center justify-center text-emerald-500">
-               <User size={64} />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-white">{user?.name}</h3>
-              <p className="text-xs text-emerald-500 font-bold uppercase tracking-widest mt-1">Verified Operator</p>
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+        <div className="md:col-span-1 bg-card-bg p-10 border border-border-color rounded-[3rem] text-center space-y-6 shadow-xl">
+          <div className="size-24 rounded-full bg-accent flex items-center justify-center mx-auto text-white shadow-lg shadow-accent/20">
+            <User size={40} />
+          </div>
+          <div>
+            <h3 className="text-2xl font-black text-text-primary tracking-tight">{user?.name}</h3>
+            <p className="text-text-secondary text-sm font-bold">{user?.email}</p>
           </div>
         </div>
 
-        <div className="md:col-span-2 space-y-6">
-          <div className="glass-card p-8 space-y-8 border-white/5">
-            <h3 className="text-lg font-bold text-white uppercase tracking-widest border-b border-white/5 pb-4">Identity Details</h3>
-            
-            <div className="space-y-6">
-              <ProfileItem icon={<User size={18} />} label="Full Name" value={user?.name || "N/A"} />
-              <ProfileItem icon={<Mail size={18} />} label="Email Address" value={user?.email || "N/A"} />
-              <ProfileItem icon={<ShieldCheck size={18} />} label="Operator Status" value="Active / Premium" />
-            </div>
+        <div className="md:col-span-2 bg-card-bg p-12 border border-border-color rounded-[3rem] space-y-10 shadow-xl">
+          <h3 className="text-[11px] font-black text-text-primary uppercase tracking-[0.4em] border-b border-border-color pb-6">Identity Details</h3>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+            <InfoItem icon={<User size={18} />} label="Full Name" value={user?.name || "N/A"} />
+            <InfoItem icon={<Mail size={18} />} label="Email Address" value={user?.email || "N/A"} />
+            <InfoItem icon={<Shield size={18} />} label="Access Tier" value="Elite Operator" />
+            <InfoItem icon={<Zap size={18} />} label="Persona Mode" value={user?.persona || "Mentor"} />
           </div>
         </div>
       </div>
@@ -46,18 +43,16 @@ async function ProfilePage() {
   );
 }
 
-function ProfileItem({ icon, label, value }: { icon: any, label: string, value: string }) {
+function InfoItem({ icon, label, value }: { icon: any, label: string, value: string }) {
   return (
-    <div className="flex items-center gap-4 group">
-      <div className="size-10 rounded-xl bg-slate-800 border border-white/5 flex items-center justify-center text-slate-500 group-hover:text-emerald-500 transition-colors">
-        {icon}
-      </div>
-      <div>
-        <p className="text-[10px] uppercase tracking-widest text-slate-600 font-bold">{label}</p>
-        <p className="text-white font-medium">{value}</p>
-      </div>
+    <div className="space-y-2">
+        <div className="flex items-center gap-2 text-text-secondary">
+          {icon}
+          <span className="text-[10px] font-black uppercase tracking-[0.2em]">{label}</span>
+        </div>
+        <p className="text-text-primary font-bold text-lg">{value}</p>
     </div>
-  );
+  )
 }
 
 export default ProfilePage;

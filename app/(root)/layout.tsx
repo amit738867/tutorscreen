@@ -22,6 +22,8 @@ import { isAuthenticated } from "@/lib/actions/auth.action"
 
 import { usePathname } from "next/navigation";
 
+import { ThemeToggle } from "@/components/ThemeToggle";
+
 const Layout =  ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -64,37 +66,34 @@ const Layout =  ({ children }: { children: ReactNode }) => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-dark-100">
+      <div className="min-h-screen flex items-center justify-center bg-bg-primary">
         <div className="relative size-12">
-          <div className="absolute inset-0 rounded-full border-2 border-emerald-500/20"></div>
-          <div className="absolute inset-0 rounded-full border-t-2 border-emerald-500 animate-spin"></div>
+          <div className="absolute inset-0 rounded-full border-2 border-accent/20"></div>
+          <div className="absolute inset-0 rounded-full border-t-2 border-accent animate-spin"></div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-dark-100 text-foreground selection:bg-emerald-500/30 selection:text-white">
-      {/* Background Texture */}
-      <div className="fixed inset-0 z-0 bg-[url('/grid.svg')] bg-[length:40px_40px] opacity-[0.03] pointer-events-none" />
-      <div className="fixed inset-0 z-0 bg-radial-gradient(circle_at_50%_-20%,rgba(16,185,129,0.05),transparent_60%) pointer-events-none" />
+    <div className="min-h-screen bg-bg-primary text-text-primary selection:bg-accent/30 selection:text-white transition-colors duration-500 font-mona-sans">
+      {/* Background Texture - Very subtle */}
+      <div className="fixed inset-0 z-0 bg-[url('/grid.svg')] bg-[length:40px_40px] opacity-[0.03] dark:opacity-[0.05] pointer-events-none" />
       
       <div className="relative z-10">
         {/* Modern Glass Header */}
         <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled 
-            ? 'py-4' 
-            : 'py-8'
+          isScrolled ? 'py-4' : 'py-8'
         }`}>
           <div className="container mx-auto px-6 max-w-7xl">
-            <div className={`flex items-center justify-between px-6 py-3 rounded-2xl transition-all duration-500 ${
+            <div className={`flex items-center justify-between px-6 py-3 rounded-2xl transition-all duration-500 border ${
               isScrolled 
-                ? 'bg-dark-200/80 backdrop-blur-xl border border-white/10 shadow-2xl' 
-                : 'bg-transparent border border-transparent'
+                ? 'bg-card-bg/80 backdrop-blur-xl border-border-color shadow-lg' 
+                : 'bg-transparent border-transparent'
             }`}>
               {/* Brand */}
               <Link href="/" className="flex items-center gap-3 group">
-                <div className="relative size-10 flex items-center justify-center bg-emerald-500 rounded-xl group-hover:rotate-6 transition-transform">
+                <div className="relative size-10 flex items-center justify-center bg-accent rounded-xl group-hover:rotate-6 transition-transform shadow-lg shadow-accent/20">
                    <Image 
                     src="/logo.svg" 
                     alt="Logo" 
@@ -104,8 +103,8 @@ const Layout =  ({ children }: { children: ReactNode }) => {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-outfit font-bold text-xl tracking-tight text-white">TutorScreen</span>
-                  <span className="text-[10px] uppercase tracking-[0.3em] text-emerald-500 font-bold -mt-1">AI Tutor Screener</span>
+                  <span className="font-bold text-xl tracking-tight text-text-primary">TutorScreen</span>
+                  <span className="text-[10px] uppercase tracking-[0.3em] text-accent font-bold -mt-1">AI Tutor Screener</span>
                 </div>
               </Link>
               
@@ -119,31 +118,32 @@ const Layout =  ({ children }: { children: ReactNode }) => {
               
               {/* User Section */}
               <div className="flex items-center gap-4">
+                <ThemeToggle />
                 <div className="relative group">
-                  <button className="flex items-center gap-3 p-1 pr-3 rounded-full bg-slate-800/50 hover:bg-slate-700/50 border border-white/5 transition-colors">
-                    <div className="size-8 rounded-full bg-emerald-500 flex items-center justify-center text-slate-950">
+                  <button className="flex items-center gap-3 p-1 pr-3 rounded-full bg-bg-secondary hover:bg-bg-secondary/80 border border-border-color transition-all shadow-sm">
+                    <div className="size-8 rounded-full bg-accent flex items-center justify-center text-white">
                        <User size={16} />
                     </div>
-                    <ChevronDown size={14} className="text-slate-500 group-hover:text-white transition-colors" />
+                    <ChevronDown size={14} className="text-text-secondary group-hover:text-text-primary transition-colors" />
                   </button>
                   
                   {/* Dropdown */}
-                  <div className="absolute right-0 mt-4 w-64 origin-top-right bg-dark-300 border border-white/10 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform scale-95 group-hover:scale-100 z-50 overflow-hidden">
-                    <div className="p-4 bg-white/5 border-b border-white/5">
-                        <p className="font-bold text-white">{user?.name || 'Session Operator'}</p>
-                        <p className="text-xs text-slate-500">{user?.email || 'operator@devprep.pro'}</p>
+                  <div className="absolute right-0 mt-4 w-64 origin-top-right bg-card-bg border border-border-color rounded-2xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform scale-95 group-hover:scale-100 z-50 overflow-hidden backdrop-blur-xl">
+                    <div className="p-4 border-b border-border-color">
+                        <p className="font-bold text-text-primary">{user?.name || 'Session Operator'}</p>
+                        <p className="text-xs text-text-secondary">{user?.email || 'operator@devprep.pro'}</p>
                     </div>
                     <div className="p-2">
                       <DropdownItem href="/profile" icon={<User size={16} />}>Profile Settings</DropdownItem>
                       <DropdownItem href="/settings" icon={<Settings size={16} />}>System Config</DropdownItem>
-                      <div className="h-px bg-white/5 my-2" />
+                      <div className="h-px bg-border-color my-2" />
                       <button
                         onClick={() => {
                           localStorage.clear();
                           sessionStorage.clear();
                           window.location.href = '/sign-in';
                         }}
-                        className="flex items-center w-full gap-3 px-4 py-3 text-sm text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors"
+                        className="flex items-center w-full gap-3 px-4 py-3 text-sm text-rose-500 hover:bg-rose-500/10 rounded-xl transition-colors font-semibold"
                       >
                         <LogOut size={16} />
                         Terminate Session
@@ -163,11 +163,11 @@ const Layout =  ({ children }: { children: ReactNode }) => {
 
         {/* Mobile Command Bar */}
         <div className="lg:hidden fixed bottom-6 left-6 right-6 z-50">
-          <div className="flex items-center justify-around p-2 bg-dark-200/90 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl">
+          <div className="flex items-center justify-around p-2 bg-card-bg border border-border-color rounded-2xl shadow-2xl backdrop-blur-xl">
             <MobileNavLink href="/" icon={<Home size={20} />} active={pathname === "/"} />
             <MobileNavLink href="/interviews" icon={<FileText size={20} />} active={pathname === "/interviews"} />
-            <div className="size-12 rounded-xl bg-emerald-500 flex items-center justify-center -mt-8 shadow-[0_10px_30px_-5px_rgba(16,185,129,0.5)]">
-               <Link href="/interview"><LogOut size={24} className="rotate-90 text-slate-950" /></Link>
+            <div className="size-12 rounded-xl bg-accent flex items-center justify-center -mt-8 shadow-lg shadow-accent/20">
+               <Link href="/interview"><LogOut size={24} className="rotate-90 text-white" /></Link>
             </div>
             <MobileNavLink href="/analytics" icon={<BarChart3 size={20} />} active={pathname === "/analytics"} />
             <MobileNavLink href="/your-interviews" icon={<BookOpen size={20} />} active={pathname === "/your-interviews"} />
@@ -182,10 +182,10 @@ const Layout =  ({ children }: { children: ReactNode }) => {
 const HeaderLink = ({ href, icon, children, active = false }: any) => (
   <Link 
     href={href}
-    className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-semibold transition-all ${
+    className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all ${
       active 
-        ? 'text-white bg-white/10' 
-        : 'text-slate-500 hover:text-white hover:bg-white/5'
+        ? 'text-accent bg-accent/10' 
+        : 'text-text-secondary hover:text-accent hover:bg-accent/5'
     }`}
   >
     {icon}
@@ -198,8 +198,8 @@ const MobileNavLink = ({ href, icon, active = false }: any) => (
     href={href}
     className={`p-3 rounded-xl transition-all ${
       active 
-        ? 'text-emerald-500' 
-        : 'text-slate-500 hover:text-emerald-400'
+        ? 'text-accent' 
+        : 'text-text-secondary hover:text-accent'
     }`}
   >
     {icon}
@@ -209,7 +209,7 @@ const MobileNavLink = ({ href, icon, active = false }: any) => (
 const DropdownItem = ({ href, icon, children }: any) => (
   <Link 
     href={href}
-    className="flex items-center gap-3 px-4 py-3 text-sm text-slate-300 hover:bg-white/5 hover:text-white rounded-xl transition-all"
+    className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-text-secondary hover:bg-accent/5 hover:text-accent rounded-xl transition-all"
   >
     {icon}
     {children}
