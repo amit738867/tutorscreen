@@ -1,7 +1,7 @@
-# TutorScreen | Pedagogy Elite MVP Documentation
+# ScreenElite | Pedagogy Elite MVP Documentation
 
 ## 1. Project Overview
-TutorScreen is a high-fidelity AI-driven pedagogical assessment and interview training platform. It is designed to evaluate and train educators and professionals across various industries using hyper-realistic voice and text simulations. The platform provides surgical, recruiter-ready feedback based on industry benchmarks.
+ScreenElite is a high-fidelity AI-driven pedagogical assessment and interview training platform. It is designed to evaluate and train educators and professionals across various industries using hyper-realistic voice and text simulations. The platform provides surgical, recruiter-ready feedback based on industry benchmarks.
 
 ---
 

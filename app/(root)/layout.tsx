@@ -103,8 +103,8 @@ const Layout =  ({ children }: { children: ReactNode }) => {
                   />
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-bold text-xl tracking-tight text-text-primary">TutorScreen</span>
-                  <span className="text-[10px] uppercase tracking-[0.3em] text-accent font-bold -mt-1">AI Tutor Screener</span>
+                  <span className="font-bold text-xl tracking-tight text-text-primary">ScreenElite</span>
+                  <span className="text-[10px] uppercase tracking-[0.3em] text-accent font-bold -mt-1">AI Protocol Screener</span>
                 </div>
               </Link>
               

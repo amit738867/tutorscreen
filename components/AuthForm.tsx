@@ -134,7 +134,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
             </div>
             <div className="flex flex-col">
               <h1 className="text-3xl font-black text-text-primary tracking-tighter">
-                TutorScreen
+                ScreenElite
               </h1>
               <p className="text-[10px] font-bold text-accent uppercase tracking-[0.4em] -mt-1">
                 Elite Protocol
@@ -168,7 +168,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
            <div className="p-3 bg-accent rounded-2xl mb-4 shadow-lg shadow-accent/20">
               <Image src="/logo.svg" alt="logo" height={24} width={24} className="invert brightness-0" />
            </div>
-           <h2 className="text-2xl font-black text-text-primary tracking-tighter uppercase">TutorScreen</h2>
+           <h2 className="text-2xl font-black text-text-primary tracking-tighter uppercase">ScreenElite</h2>
         </div>
 
         <div className="space-y-2 mb-10">

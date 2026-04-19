@@ -10,8 +10,8 @@ const monaSans = Mona_Sans({
 
 
 export const metadata: Metadata = {
-  title: "TutorScreen | Pedagogy Elite",
-  description: "The next generation of tutor screening and pedagogical evaluation.",
+  title: "ScreenElite | Pedagogy Elite",
+  description: "The next generation of professional screening and pedagogical evaluation.",
 };
 
 import { ThemeProvider } from "@/components/theme-provider";
