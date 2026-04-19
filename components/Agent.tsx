@@ -289,13 +289,28 @@ INTERVIEW CLOSURE:
 
   if (callStatus === CallStatus.ANALYZING) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[500px] space-y-10">
-        <div className="relative size-32 rounded-[2rem] bg-bg-secondary border border-border-color flex items-center justify-center shadow-xl">
-          <div className="size-16 border-[6px] border-accent/20 border-t-accent rounded-full animate-spin" />
-        </div>
-        <div className="text-center space-y-4">
-          <h2 className="text-4xl font-black text-text-primary tracking-tighter">Analyzing Performance</h2>
-          <p className="text-text-secondary max-w-sm mx-auto font-bold text-lg leading-relaxed">Evaluating your performance against industry benchmarks...</p>
+      <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-bg-primary/60 backdrop-blur-[20px] animate-in fade-in duration-700">
+        <div className="absolute inset-0 bg-radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.08),transparent_70%)" />
+        
+        <div className="relative space-y-2 text-center group">
+          <div className="flex items-center justify-center mb-8">
+            <div className="size-24 border-[4px] border-accent/20 border-t-accent rounded-full animate-spin" />
+          </div>
+          
+          <h2 className="text-[12rem] font-black text-text-primary tracking-[-0.05em] leading-none opacity-10 blur-[2px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none">
+            EVALUATING
+          </h2>
+          
+          <h2 className="text-8xl md:text-9xl font-black text-text-primary tracking-tighter leading-none relative z-10 animate-pulse">
+            EVALUATING<span className="text-accent italic lowercase">.</span>
+          </h2>
+          
+          <div className="flex flex-col items-center gap-4 relative z-10 pt-8">
+             <div className="h-px w-32 bg-border-color" />
+             <p className="text-[12px] font-black text-accent uppercase tracking-[0.6em] animate-in slide-in-from-bottom-2 duration-1000">
+               Synthesizing Pedagogical Metrics
+             </p>
+          </div>
         </div>
       </div>
     );
