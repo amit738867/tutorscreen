@@ -289,27 +289,37 @@ INTERVIEW CLOSURE:
 
   if (callStatus === CallStatus.ANALYZING) {
     return (
-      <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-bg-primary/60 backdrop-blur-[20px] animate-in fade-in duration-700">
-        <div className="absolute inset-0 bg-radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.08),transparent_70%)" />
+      <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-bg-primary/60 backdrop-blur-3xl animate-in fade-in duration-700">
+        <div className="absolute inset-0 bg-radial-gradient(circle_at_50%_50%,rgba(16,185,129,0.1),transparent_70%)" />
         
-        <div className="relative space-y-2 text-center group">
-          <div className="flex items-center justify-center mb-8">
-            <div className="size-24 border-[4px] border-accent/20 border-t-accent rounded-full animate-spin" />
+        <div className="relative space-y-12 text-center z-10 px-6">
+          <div className="relative size-40 mx-auto rounded-[3rem] bg-bg-secondary border border-border-color flex items-center justify-center shadow-2xl overflow-hidden group">
+            <div className="absolute inset-0 bg-accent/5 animate-pulse" />
+            <div className="size-20 border-[8px] border-accent/10 border-t-accent rounded-full animate-spin shadow-lg" />
           </div>
-          
-          <h2 className="text-[12rem] font-black text-text-primary tracking-[-0.05em] leading-none opacity-10 blur-[2px] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 select-none">
-            EVALUATING
-          </h2>
-          
-          <h2 className="text-8xl md:text-9xl font-black text-text-primary tracking-tighter leading-none relative z-10 animate-pulse">
-            EVALUATING<span className="text-accent italic lowercase">.</span>
-          </h2>
-          
-          <div className="flex flex-col items-center gap-4 relative z-10 pt-8">
-             <div className="h-px w-32 bg-border-color" />
-             <p className="text-[12px] font-black text-accent uppercase tracking-[0.6em] animate-in slide-in-from-bottom-2 duration-1000">
-               Synthesizing Pedagogical Metrics
-             </p>
+
+          <div className="space-y-6">
+            <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-accent/10 border border-accent/20 text-accent text-[12px] font-black uppercase tracking-[0.5em] animate-pulse">
+              AI Processing
+            </div>
+            <h2 className="text-7xl md:text-9xl font-black text-text-primary tracking-[calc(-0.05em)] leading-none uppercase italic">
+              Evaluating <br />
+              <span className="text-accent not-italic">Performance.</span>
+            </h2>
+            <p className="text-text-secondary max-w-xl mx-auto font-bold text-xl tracking-tight leading-relaxed opacity-60">
+              Synchronizing session logs with pedagogical benchmarks...
+            </p>
+          </div>
+        </div>
+        
+        {/* Progress Indicator */}
+        <div className="absolute bottom-20 w-full max-w-md px-10">
+          <div className="h-1.5 w-full bg-bg-secondary rounded-full overflow-hidden border border-border-color">
+            <div className="h-full bg-accent animate-progress-fast" />
+          </div>
+          <div className="mt-4 flex justify-between text-[10px] font-black text-text-secondary uppercase tracking-[0.4em] opacity-40">
+            <span>Data Ingestion</span>
+            <span>Finalizing Analysis</span>
           </div>
         </div>
       </div>
